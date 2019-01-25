@@ -94,7 +94,12 @@ def main():
     branch = subprocess.check_output([GIT, 'show', '-s', '--format=%H', initial_commit]).decode('utf8').splitlines()[0]
 
     # Iterate through commits
+    commit_number = 1
     while True:
+        # Log a message to prevent Travis from timing out
+        if commit_number % 50 == 0:
+            print("verify-commits: [in-progress] processing commit number {} ({})".format(commit_number, current_commit[:8]))
+
         if current_commit == verified_root:
             print('There is a valid path from "{}" to {} where all commits are signed!'.format(initial_commit, verified_root))
             sys.exit(0)
@@ -150,6 +155,7 @@ def main():
 
         prev_commit = current_commit
         current_commit = parents[0]
+        commit_number += 0
 
 if __name__ == '__main__':
     main()
